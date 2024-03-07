@@ -61,7 +61,7 @@ def train():
     learning_rate = 3e-4
     num_epochs = 5
 
-    writer = SummaryWriter()
+    writer = SummaryWriter('runs/latest')
     step = 0
 
     # initialize model, loss etc
