@@ -59,7 +59,7 @@ class CNNtoRNN(nn.Module):
         outputs = self.decoderRNN(features, recipe_tokens)
         return outputs
 
-    def recipe_generate(self, image, vocabulary, max_length=50):
+    def recipe_generate(self, image, vocabulary, max_length=500):
         result_recipe = []
 
         with torch.no_grad():
@@ -70,7 +70,7 @@ class CNNtoRNN(nn.Module):
                 hiddens, states = self.decoderRNN.lstm(x, states)
                 output = self.decoderRNN.linear(hiddens.squeeze(0))
                 
-                output_dist = output.data.view(-1).div(0.8).exp()
+                output_dist = output.data.view(-1).div(0.9).exp()
                 top_i = torch.multinomial(output_dist, 1)[0]
                 
                 result_recipe.append(top_i.item())
