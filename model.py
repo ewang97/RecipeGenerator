@@ -70,7 +70,7 @@ class CNNtoRNN(nn.Module):
                 hiddens, states = self.decoderRNN.lstm(x, states)
                 output = self.decoderRNN.linear(hiddens.squeeze(0))
                 
-                output_dist = output.data.view(-1).div(0.5).exp()
+                output_dist = output.data.view(-1).div(0.2).exp()
                 top_i = torch.multinomial(output_dist, 1)[0]
                 
                 result_recipe.append(top_i.item())

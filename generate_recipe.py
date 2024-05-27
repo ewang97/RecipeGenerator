@@ -19,16 +19,17 @@ def generate_recipe(img_path, model, device, dataset):
 
     model.eval()
     test_img = transform(Image.open(img_path).convert("RGB")).unsqueeze(0)
-   
-    print(" ".join(model.recipe_generate(test_img.to(device), dataset.vocab)))
+    recipe_text = model.recipe_generate(test_img.to(device), dataset.vocab)
 
     model.train()
+
+    return " ".join(recipe_text)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Predict a recipe for an image")
 
     parser.add_argument("--img_path", dest="img", 
-                        action="store", default="./Food Images/-em-stracciatella-tortoni-em-cake-with-espresso-fudge-sauce-242605.jpg")
+                        action="store", default="./Food Images/miso-butter-roast-chicken-acorn-squash-panzanella.jpg")
     parser.add_argument("--checkpoint", dest="checkpoint", 
                         action="store", default="my_checkpoint.pth.tar")
     parser.add_argument("--gpu", dest="gpu", 
@@ -53,5 +54,9 @@ if __name__ == "__main__":
     
     checkpoint = torch.load(args.checkpoint)
     load_checkpoint(checkpoint, model, optimizer)
-    print("Recipe Output: ")
-    print(generate_recipe(args.img, model, device, dataset))
+    print(os.path.relpath(args.img, './Food Images').strip('.jpg'))
+    recipe_text = generate_recipe(args.img, model, device, dataset)
+    print("True Recipe: ")
+    print(str(dataset.recipe_df[dataset.recipe_df['Image_Name'] == os.path.relpath(args.img, './Food Images').strip('.jpg')].Instructions[0]))
+    print("Recipe Model Output: ")
+    print(recipe_text)

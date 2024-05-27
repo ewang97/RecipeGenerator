@@ -76,6 +76,7 @@ def train():
     if load_model:
         step = load_checkpoint(torch.load("my_checkpoint.pth.tar"), model, optimizer)
 
+
     model.train()
 
     for epoch in range(num_epochs):
