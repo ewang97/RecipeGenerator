@@ -30,18 +30,20 @@ def validate(model, dataloader, criterion, dataset):
         ):
             imgs = imgs.to(device)
             recipe_tokens = recipe_tokens.to(device)
+
             outputs = model(imgs, recipe_tokens[:-1])
             loss = criterion(
                 outputs.reshape(-1, outputs.shape[2]), recipe_tokens.reshape(-1)
             )
             total_loss += loss.item()
+            recipe_prediction = model.recipe_generate(imgs.to(device), dataset.vocab)
 
-            # outputs and targets are tokenized sentences
-            predictions = outputs.argmax(dim=-1).tolist()
-            references = recipe_tokens
+            references = []
+            for i in recipe_tokens.reshape(-1).tolist():
+                references.append(dataset.vocab.itos[i])
 
-            all_predictions.extend(predictions)
-            all_references.extend(references)
+            all_predictions.append(recipe_prediction)
+            all_references.append(references)
 
     average_bleu_score = compute_bleu_score(all_predictions, all_references)
     average_loss = total_loss / len(dataloader)
@@ -80,4 +82,4 @@ if __name__ == "__main__":
     load_checkpoint(checkpoint, model, optimizer)
 
     print("Average Loss, Average BLEU score: ")
-    print(validate(model,valid_dl,criterion,validation_subset))
+    print(validate(model,valid_dl,criterion,dataset))
