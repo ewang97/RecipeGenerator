@@ -62,10 +62,9 @@ if __name__ == "__main__":
     
     indices = [x for x in range(0,len(dataset),100)]  # List of indices you want to select
     validation_subset = Subset(dataset, indices)
-    print(validation_subset)
-    subset_dataloader = DataLoader(validation_subset, batch_size=1, shuffle=False)
+    
     valid_dl = torch.utils.data.DataLoader(validation_subset, 
-                                           batch_size=64, shuffle=False,
+                                           batch_size=1, shuffle=False,
                                            collate_fn = CollateFn(pad_idx=dataset.vocab.stoi["<PAD>"]))
     
     embed_size = 256
